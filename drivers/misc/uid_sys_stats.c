@@ -675,7 +675,7 @@ static int __init proc_uid_sys_stats_init(void)
 
 	proc_create_data("remove_uid_range", 0222, cpu_parent,
 		&uid_remove_fops, NULL);
-	proc_create_data("show_uid_stat", 0444, cpu_parent,
+	proc_create_data("show_uid_stat", S_IRUGO, cpu_parent,
 		&uid_cputime_fops, NULL);
 
 	io_parent = proc_mkdir("uid_io", NULL);
