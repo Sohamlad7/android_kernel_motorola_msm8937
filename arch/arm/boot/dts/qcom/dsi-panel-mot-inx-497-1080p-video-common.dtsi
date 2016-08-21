@@ -87,8 +87,9 @@ qcom,mdss-dsi-dma-trigger = "trigger_sw";
 qcom,mdss-dsi-mdp-trigger = "none";
 qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
 qcom,mdss-dsi-reset-sequence = <1 2>, <0 2>, <1 2>, <0 2>, <1 20>;
-qcom,mdss-dsi-lp11-init;
 qcom,mdss-dsi-tx-eot-append;
+qcom,ulps-enabled;
+qcom,panel-allow-phy-poweroff;
 
 qcom,esd-check-enabled;
 qcom,mdss-dsi-panel-status-check-mode = "reg_read";
