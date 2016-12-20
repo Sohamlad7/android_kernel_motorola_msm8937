@@ -59,6 +59,7 @@ static bool sysrq_on(void)
 {
 	return sysrq_enabled || sysrq_always_enabled;
 }
+EXPORT_SYMBOL(sysrq_on);
 
 /*
  * A value of 1 means 'all', other nonzero values are an op mask:
