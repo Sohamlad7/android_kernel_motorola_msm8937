@@ -1190,10 +1190,10 @@ static void apps_ipa_packet_receive_notify(void *priv,
 	skb->protocol = htons(ETH_P_MAP);
 
 	if (dev->stats.rx_packets % IPA_WWAN_RX_SOFTIRQ_THRESH == 0) {
-		trace_rmnet_ipa_netifni(dev->stats.rx_packets);
+		//trace_rmnet_ipa_netifni(dev->stats.rx_packets);
 		result = netif_rx_ni(skb);
 	} else {
-		trace_rmnet_ipa_netifrx(dev->stats.rx_packets);
+		//trace_rmnet_ipa_netifrx(dev->stats.rx_packets);
 		result = netif_rx(skb);
 	}
 

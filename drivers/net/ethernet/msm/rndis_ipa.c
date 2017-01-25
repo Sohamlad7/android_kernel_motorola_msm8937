@@ -28,8 +28,7 @@
 #include <linux/rndis_ipa.h>
 #include <linux/workqueue.h>
 
-#define CREATE_TRACE_POINTS
-#include "rndis_ipa_trace.h"
+
 
 #define DRV_NAME "RNDIS_IPA"
 #define DEBUGFS_DIR_NAME "rndis_ipa"
@@ -880,7 +879,7 @@ static netdev_tx_t rndis_ipa_start_xmit(struct sk_buff *skb,
 	}
 
 	skb = rndis_encapsulate_skb(skb);
-	trace_rndis_tx_dp(skb->protocol);
+	//trace_rndis_tx_dp(skb->protocol);
 	ret = ipa_tx_dp(IPA_TO_USB_CLIENT, skb, NULL);
 	if (ret) {
 		RNDIS_IPA_ERROR("ipa transmit failed (%d)\n", ret);
@@ -926,7 +925,7 @@ static void rndis_ipa_tx_complete_notify(void *private,
 
 	NULL_CHECK_NO_RETVAL(private);
 
-	trace_rndis_status_rcvd(skb->protocol);
+	//trace_rndis_status_rcvd(skb->protocol);
 
 	RNDIS_IPA_DEBUG("Tx-complete, len=%d, skb->prot=%d, outstanding=%d\n",
 		skb->len, skb->protocol,
@@ -1092,7 +1091,7 @@ static void rndis_ipa_packet_receive_notify(void *private,
 		return;
 	}
 
-	trace_rndis_netif_ni(skb->protocol);
+	//trace_rndis_netif_ni(skb->protocol);
 	result = netif_rx_ni(skb);
 	if (result)
 		RNDIS_IPA_ERROR("fail on netif_rx_ni\n");
