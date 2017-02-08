@@ -140,6 +140,11 @@ config CPU_FREQ_DEFAULT_GOV_IMPULSE
 	  loading your cpufreq low-level hardware driver, using the
 	  'impulse' governor for latency-sensitive workloads.
 
+
+config CPU_FREQ_DEFAULT_GOV_DYNAMIC_INTERACTIVE
+	bool "dynamic_interactive"
+	select CPU_FREQ_GOV_DYNAMIC_INTERACTIVE	  		  
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -258,6 +263,10 @@ config CPUFREQ_DT
 	  systems which share clock and voltage across all CPUs.
 
 	  If in doubt, say N.
+	
+config CPU_FREQ_GOV_DYNAMIC_INTERACTIVE
+	tristate "'dynamic_interactive' cpufreq governor"
+	depends on CPU_FREQ			  	  
 
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
