@@ -1,0 +1,15 @@
+# Start Nebula changes
+# Many of these tweaks are thanks to AK, Franco,Nathan Chancellor & frap129.
+
+on property:sys.boot_completed=1
+    # Disable some Wlan wakelocks
+    write /sys/module/wakeup/parameters/enable_qcom_rx_wakelock_ws 0
+    write /sys/module/wakeup/parameters/enable_wlan_extscan_wl_ws 0
+    write /sys/module/wakeup/parameters/enable_wlan_ws 0
+    write /sys/module/wakeup/parameters/enable_ipa_ws 0
+    write /sys/module/wakeup/parameters/enable_timerfd_ws 0
+    write /sys/module/wakeup/parameters/enable_netlink_ws 0
+
+    # Set I/O Scheduler tweaks
+    write /sys/block/mmcblk0/queue/read_ahead_kb 512
+    write /sys/block/mmcblk0/bdi/min_ratio 5
