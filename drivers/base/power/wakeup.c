@@ -20,6 +20,7 @@
 
 #include "power.h"
 
+<<<<<<< HEAD
 static bool enable_qcom_rx_wakelock_ws = true;
 module_param(enable_qcom_rx_wakelock_ws, bool, 0644);
 static bool enable_wlan_scan_ws = true;
@@ -30,6 +31,16 @@ static bool enable_wlan_ws = true;
 module_param(enable_wlan_ws, bool, 0644);
 static bool enable_timerfd_ws = true;
 module_param(enable_timerfd_ws, bool, 0644);
+=======
+
+#ifdef CONFIG_BOEFFLA_WL_BLOCKER
+char list_wl[255];
+char list_wl_search[257];
+bool wl_blocker_active = false;
+bool wl_blocker_debug = false;
+#endif
+
+>>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 
 /*
  * If set, the suspend/hibernate code will abort transitions to a sleep state
@@ -547,13 +558,56 @@ static void wakeup_source_activate(struct wakeup_source *ws)
 	trace_wakeup_source_activate(ws->name, cec);
 }
 
+#ifdef CONFIG_BOEFFLA_WL_BLOCKER
+// AP: Function to check if a wakelock is on the wakelock blocker list
+static bool check_for_block(struct wakeup_source *ws)
+{
+	char wakelock_name[52];
+
+	// if debug mode on, print every wakelock requested
+	if (wl_blocker_debug)
+		printk("Boeffla WL blocker: %s requested\n", ws->name);
+
+	// if there is no list of wakelocks to be blocked, exit without futher checking
+	if (!wl_blocker_active)
+		return false;
+
+	// check if wakelock is in wake lock list to be blocked
+	if (ws)
+	{
+		// wake lock names which are longer than 50 chars are not handled
+		if (strlen(ws->name) > 50)
+			return false;
+
+		sprintf(wakelock_name, ";%s;", ws->name);
+
+		if(strstr(list_wl_search, wakelock_name) == NULL)
+			return false;
+	}
+
+	// wake lock is in list, print it if debug mode on
+	if (wl_blocker_debug)
+		printk("Boeffla WL blocker: %s blocked\n", ws->name);
+
+	// finally block it
+	return true;
+}
+#endif
+
 /**
  * wakeup_source_report_event - Report wakeup event using the given source.
  * @ws: Wakeup source to report the event for.
  */
 static void wakeup_source_report_event(struct wakeup_source *ws)
 {
+<<<<<<< HEAD
 	if (!wakeup_source_blocker(ws)) {
+=======
+#ifdef CONFIG_BOEFFLA_WL_BLOCKER
+	if (!check_for_block(ws))	// AP: check if wakelock is on wakelock blocker list
+	{
+#endif
+>>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 		ws->event_count++;
 		/* This is racy, but the counter is approximate anyway. */
 		if (events_check_enabled)
@@ -561,7 +615,13 @@ static void wakeup_source_report_event(struct wakeup_source *ws)
 
 		if (!ws->active)
 			wakeup_source_activate(ws);
+<<<<<<< HEAD
 	}
+=======
+#ifdef CONFIG_BOEFFLA_WL_BLOCKER
+	}
+#endif
+>>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 }
 
 /**
@@ -611,6 +671,77 @@ void pm_stay_awake(struct device *dev)
 }
 EXPORT_SYMBOL_GPL(pm_stay_awake);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PM_AUTOSLEEP
+static void update_prevent_sleep_time(struct wakeup_source *ws, ktime_t now)
+{
+	ktime_t delta = ktime_sub(now, ws->start_prevent_time);
+	ws->prevent_sleep_time = ktime_add(ws->prevent_sleep_time, delta);
+}
+#else
+static inline void update_prevent_sleep_time(struct wakeup_source *ws,
+					     ktime_t now) {}
+#endif
+
+
+/**
+ * wakup_source_deactivate - Mark given wakeup source as inactive.
+ * @ws: Wakeup source to handle.
+ *
+ * Update the @ws' statistics and notify the PM core that the wakeup source has
+ * become inactive by decrementing the counter of wakeup events being processed
+ * and incrementing the counter of registered wakeup events.
+ */
+static void wakeup_source_deactivate(struct wakeup_source *ws)
+{
+	unsigned int cnt, inpr, cec;
+	ktime_t duration;
+	ktime_t now;
+
+	ws->relax_count++;
+	/*
+	 * __pm_relax() may be called directly or from a timer function.
+	 * If it is called directly right after the timer function has been
+	 * started, but before the timer function calls __pm_relax(), it is
+	 * possible that __pm_stay_awake() will be called in the meantime and
+	 * will set ws->active.  Then, ws->active may be cleared immediately
+	 * by the __pm_relax() called from the timer function, but in such a
+	 * case ws->relax_count will be different from ws->active_count.
+	 */
+	if (ws->relax_count != ws->active_count) {
+		ws->relax_count--;
+		return;
+	}
+
+	ws->active = false;
+
+	now = ktime_get();
+	duration = ktime_sub(now, ws->last_time);
+	ws->total_time = ktime_add(ws->total_time, duration);
+	if (ktime_to_ns(duration) > ktime_to_ns(ws->max_time))
+		ws->max_time = duration;
+
+	ws->last_time = now;
+	del_timer(&ws->timer);
+	ws->timer_expires = 0;
+
+	if (ws->autosleep_enabled)
+		update_prevent_sleep_time(ws, now);
+
+	/*
+	 * Increment the counter of registered wakeup events and decrement the
+	 * couter of wakeup events in progress simultaneously.
+	 */
+	cec = atomic_add_return(MAX_IN_PROGRESS, &combined_event_count);
+	trace_wakeup_source_deactivate(ws->name, cec);
+
+	split_counters(&cnt, &inpr);
+	if (!inpr && waitqueue_active(&wakeup_count_wait_queue))
+		wake_up(&wakeup_count_wait_queue);
+}
+
+>>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 /**
  * __pm_relax - Notify the PM core that processing of a wakeup event has ended.
  * @ws: Wakeup source object associated with the source of the event.
@@ -782,8 +913,14 @@ void pm_print_active_wakeup_sources(void)
 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
 		if (ws->active) {
 			pr_info("active wakeup source: %s\n", ws->name);
+<<<<<<< HEAD
 
 			if (!wakeup_source_blocker(ws))
+=======
+#ifdef CONFIG_BOEFFLA_WL_BLOCKER
+			if (!check_for_block(ws))	// AP: check if wakelock is on wakelock blocker list
+#endif
+>>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 				active = 1;
 		} else if (!active &&
 			   (!last_activity_ws ||

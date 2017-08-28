@@ -679,7 +679,13 @@ void dpm_resume_early(pm_message_t state)
 	struct device *dev;
 	ktime_t starttime = ktime_get();
 
+<<<<<<< HEAD
 	pm_print_active_wakeup_sources();
+=======
+#ifdef CONFIG_BOEFFLA_WL_BLOCKER
+	pm_print_active_wakeup_sources();
+#endif
+>>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 
 	trace_suspend_resume(TPS("dpm_resume_early"), state.event, true);
 	mutex_lock(&dpm_list_mtx);
