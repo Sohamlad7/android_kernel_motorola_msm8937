@@ -524,30 +524,23 @@ void fusb_GPIO_Cleanup(void)
 	}
 #endif // FSC_INTERRUPT_TRIGGERED
 
-	if (gpio_is_valid(chip->gpio_IntN) >= 0) {
 #ifdef FSC_DEBUG
-		gpio_unexport(chip->gpio_IntN);
+	gpio_unexport(chip->gpio_IntN);
 #endif // FSC_DEBUG
 
-		gpio_free(chip->gpio_IntN);
-	}
+	gpio_free(chip->gpio_IntN);
 
-	if (gpio_is_valid(chip->gpio_VBus5V) >= 0) {
 #ifdef FSC_DEBUG
-		gpio_unexport(chip->gpio_VBus5V);
+	gpio_unexport(chip->gpio_VBus5V);
 #endif // FSC_DEBUG
 
-		gpio_free(chip->gpio_VBus5V);
-	}
+	gpio_free(chip->gpio_VBus5V);
 
-	if (gpio_is_valid(chip->gpio_VBusOther) >= 0) {
-		gpio_free(chip->gpio_VBusOther);
-	}
+	gpio_free(chip->gpio_VBusOther);
+
 #ifdef FSC_DEBUG
-	if (gpio_is_valid(chip->dbg_gpio_StateMachine) >= 0) {
-		gpio_unexport(chip->dbg_gpio_StateMachine);
-		gpio_free(chip->dbg_gpio_StateMachine);
-	}
+	gpio_unexport(chip->dbg_gpio_StateMachine);
+	gpio_free(chip->dbg_gpio_StateMachine);
 #endif // FSC_DEBUG
 }
 

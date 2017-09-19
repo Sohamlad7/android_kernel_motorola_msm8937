@@ -5611,15 +5611,16 @@ void SP_CTRL_Int_Process(void)
 	/*added for B0 version-ANX.Fei-20110831-Begin*/
 	if(c5 & SP_TX_INT_DPCD_IRQ_REQUEST)//IRQ int
 		SP_CTRL_SINK_IRQ_Int_Handler();
+	if(sp_tx_pd_mode ) {
+		return;
+	}
+
+#ifndef Standard_DP
+	if(c5 & SP_TX_INT_STATUS1_POLLING_ERR)//c-wire polling error
+		SP_CTRL_POLLING_ERR_Int_Handler();
 	if(sp_tx_pd_mode )
 		return;
-
-		#ifndef Standard_DP
-		if(c5 & SP_TX_INT_STATUS1_POLLING_ERR)//c-wire polling error
-			SP_CTRL_POLLING_ERR_Int_Handler();
-		if(sp_tx_pd_mode )
-			return;
-		#endif
+#endif
 
 	if(c5 & SP_TX_INT_STATUS1_TRAINING_Finish)//link training finish int
 		SP_CTRL_LT_DONE_Int_Handler();
