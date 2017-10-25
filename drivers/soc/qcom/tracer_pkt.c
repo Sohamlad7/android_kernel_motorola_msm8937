@@ -14,8 +14,6 @@
 #include <linux/module.h>
 #include <linux/types.h>
 #include <soc/qcom/tracer_pkt.h>
-#define CREATE_TRACE_POINTS
-#include "tracer_pkt_private.h"
 
 static unsigned qdss_tracing;
 module_param_named(qdss_tracing_enable, qdss_tracing,
@@ -170,7 +168,7 @@ int tracer_pkt_log_event(void *data, uint32_t event_id)
 		return -EINVAL;
 
 	if (qdss_tracing) {
-		trace_tracer_pkt_event(event_id, pkt_hdr->cc);
+		//trace_tracer_pkt_event(event_id, pkt_hdr->cc);
 		return 0;
 	}
 
