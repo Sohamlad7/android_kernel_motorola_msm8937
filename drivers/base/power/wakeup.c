@@ -20,27 +20,12 @@
 
 #include "power.h"
 
-<<<<<<< HEAD
-static bool enable_qcom_rx_wakelock_ws = true;
-module_param(enable_qcom_rx_wakelock_ws, bool, 0644);
-static bool enable_wlan_scan_ws = true;
-module_param(enable_wlan_scan_ws, bool, 0644);
-static bool enable_ipa_ws = true;
-module_param(enable_ipa_ws, bool, 0644);
-static bool enable_wlan_ws = true;
-module_param(enable_wlan_ws, bool, 0644);
-static bool enable_timerfd_ws = true;
-module_param(enable_timerfd_ws, bool, 0644);
-=======
-
 #ifdef CONFIG_BOEFFLA_WL_BLOCKER
 char list_wl[255];
 char list_wl_search[257];
 bool wl_blocker_active = false;
 bool wl_blocker_debug = false;
 #endif
-
->>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 
 /*
  * If set, the suspend/hibernate code will abort transitions to a sleep state
@@ -600,14 +585,10 @@ static bool check_for_block(struct wakeup_source *ws)
  */
 static void wakeup_source_report_event(struct wakeup_source *ws)
 {
-<<<<<<< HEAD
-	if (!wakeup_source_blocker(ws)) {
-=======
 #ifdef CONFIG_BOEFFLA_WL_BLOCKER
 	if (!check_for_block(ws))	// AP: check if wakelock is on wakelock blocker list
 	{
 #endif
->>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 		ws->event_count++;
 		/* This is racy, but the counter is approximate anyway. */
 		if (events_check_enabled)
@@ -615,13 +596,9 @@ static void wakeup_source_report_event(struct wakeup_source *ws)
 
 		if (!ws->active)
 			wakeup_source_activate(ws);
-<<<<<<< HEAD
-	}
-=======
 #ifdef CONFIG_BOEFFLA_WL_BLOCKER
 	}
 #endif
->>>>>>> 1e4d66d... boeffla_wl_blocker: add generic wakelock blocker driver v1.0.0
 }
 
 /**
