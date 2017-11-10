@@ -29,7 +29,6 @@
 #include <linux/miscdevice.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h>
-#include <asm/mach-types.h>
 #include <asm/setup.h>
 #include <linux/wakelock.h>
 #include <linux/jiffies.h>

@@ -2774,7 +2774,7 @@ static int arm_smmu_add_device(struct device *dev)
 
 	if (dev_is_pci(dev)) {
 		u32 sid;
-		int tmp;
+		int tmp = 1;
 
 		cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
 		if (!cfg) {
@@ -2783,7 +2783,7 @@ static int arm_smmu_add_device(struct device *dev)
 		}
 
 		cfg->num_streamids = 1;
-		ret = msm_pcie_configure_sid(dev, &sid, &tmp);
+		ret = tmp;
 		if (ret) {
 			dev_err(dev,
 				"Couldn't configure SID through PCI-e driver: %d\n",

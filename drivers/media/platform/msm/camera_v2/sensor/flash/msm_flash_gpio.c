@@ -114,7 +114,7 @@ static int32_t msm_flash_get_subdev_id(
 	return 0;
 }
 
-
+/*
 #ifdef CONFIG_COMPAT
 static void msm_flash_copy_power_settings_compat(
 	struct msm_sensor_power_setting *ps,
@@ -130,7 +130,7 @@ static void msm_flash_copy_power_settings_compat(
 	}
 }
 #endif
-
+*/
 static int32_t msm_flash_gpio_init(
 	struct msm_flash_ctrl_t *flash_ctrl,
 	struct msm_flash_cfg_data_t *flash_data)
