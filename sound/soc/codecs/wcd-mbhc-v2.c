@@ -1246,9 +1246,8 @@ correct_plug_type:
 			wcd_enable_curr_micbias(mbhc,
 						WCD_MBHC_EN_NONE);
 			if (mbhc->micbias_enable) {
-				if (mbhc->mbhc_cb->mbhc_micb_ctrl_thr_mic)
-					mbhc->mbhc_cb->mbhc_micb_ctrl_thr_mic(
-						mbhc->codec, MIC_BIAS_2, false);
+				mbhc->mbhc_cb->mbhc_micb_ctrl_thr_mic(
+					mbhc->codec, MIC_BIAS_2, false);
 				if (mbhc->mbhc_cb->set_micbias_value)
 					mbhc->mbhc_cb->set_micbias_value(
 							mbhc->codec);
@@ -1272,9 +1271,8 @@ correct_plug_type:
 			wcd_enable_curr_micbias(mbhc,
 						WCD_MBHC_EN_NONE);
 			if (mbhc->micbias_enable) {
-				if (mbhc->mbhc_cb->mbhc_micb_ctrl_thr_mic)
-					mbhc->mbhc_cb->mbhc_micb_ctrl_thr_mic(
-						mbhc->codec, MIC_BIAS_2, false);
+				mbhc->mbhc_cb->mbhc_micb_ctrl_thr_mic(
+					mbhc->codec, MIC_BIAS_2, false);
 				if (mbhc->mbhc_cb->set_micbias_value)
 					mbhc->mbhc_cb->set_micbias_value(
 							mbhc->codec);
