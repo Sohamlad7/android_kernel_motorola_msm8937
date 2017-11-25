@@ -8,16 +8,17 @@
 set -e
 
 ## Copy this script inside the kernel directory
+git clone https://bitbucket.org/UBERTC/arm-eabi-4.9.git prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
 KERNEL_DIR=$PWD
-KERNEL_TOOLCHAIN=$HOME/work/arm-eabi-4.9/bin/arm-eabi-
-KERNEL_DEFCONFIG=nebula_defconfig
+KERNEL_TOOLCHAIN=flighhigh/prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
+KERNEL_DEFCONFIG=cedric_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=8
 ANY_KERNEL2_DIR=$KERNEL_DIR/AnyKernel2/
-FINAL_KERNEL_ZIP=Nebula-R1-Cedric.zip
+FINAL_KERNEL_ZIP=FlighHigh-R1-Cedric.zip
 
 # Export User & Host
-export KBUILD_BUILD_USER=CodeZero
+export KBUILD_BUILD_USER=Infixremix
 export KBUILD_BUILD_HOST=root
 
 # Clean build always lol
@@ -63,8 +64,8 @@ cp -rf $KERNEL_DIR/drivers/staging/prima/wlan.ko $ANY_KERNEL2_DIR/modules/
 echo "**** Time to zip up! ****"
 cd $ANY_KERNEL2_DIR/
 zip -r9 $FINAL_KERNEL_ZIP * -x README $FINAL_KERNEL_ZIP
-rm -rf $HOME/work/$FINAL_KERNEL_ZIP
-cp -rf $HOME/work/android_kernel_motorola_msm8937/AnyKernel2/$FINAL_KERNEL_ZIP $HOME/work/$FINAL_KERNEL_ZIP
+rm -rf $HOME/flighhigh/$FINAL_KERNEL_ZIP
+cp -rf $HOME/flighhigh/AnyKernel2/$FINAL_KERNEL_ZIP $HOME/flighhigh/$FINAL_KERNEL_ZIP
 
 echo "**** Good Bye!! ****"
 cd $KERNEL_DIR
