@@ -10,7 +10,7 @@ set -e
 ## Copy this script inside the kernel directory
 git clone https://bitbucket.org/UBERTC/arm-eabi-4.9.git prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
 KERNEL_DIR=$PWD
-KERNEL_TOOLCHAIN=flighhigh/prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
+KERNEL_TOOLCHAIN=$HOME/flighhigh/prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9/bin/arm-eabi-
 KERNEL_DEFCONFIG=cedric_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=8
