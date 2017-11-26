@@ -11,7 +11,7 @@ set -e
 git clone https://bitbucket.org/UBERTC/arm-eabi-4.9.git prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
 KERNEL_DIR=$PWD
 KERNEL_TOOLCHAIN=$HOME/flyhigh/prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9/bin/arm-eabi-
-KERNEL_DEFCONFIG=cedric_defconfig
+KERNEL_DEFCONFIG=nebula_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=8
 ANY_KERNEL2_DIR=$KERNEL_DIR/AnyKernel2/
@@ -49,7 +49,6 @@ echo "**** Copying zImage ****"
 cp -rf $KERNEL_DIR/arch/arm/boot/zImage $ANY_KERNEL2_DIR/
 
 cd ../
-cp -rf $KERNEL_DIR/drivers/staging/prima/wlan.ko $ANY_KERNEL2_DIR/modules/
 
 echo "**** Time to zip up! ****"
 cd $ANY_KERNEL2_DIR/
