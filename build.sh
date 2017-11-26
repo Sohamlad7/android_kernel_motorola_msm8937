@@ -10,16 +10,16 @@ set -e
 ## Copy this script inside the kernel directory
 git clone https://bitbucket.org/UBERTC/arm-eabi-4.9.git prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
 KERNEL_DIR=$PWD
-KERNEL_TOOLCHAIN=$HOME/flighhigh/prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9/bin/arm-eabi-
+KERNEL_TOOLCHAIN=$HOME/flyhigh/prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9/bin/arm-eabi-
 KERNEL_DEFCONFIG=cedric_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=8
 ANY_KERNEL2_DIR=$KERNEL_DIR/AnyKernel2/
-FINAL_KERNEL_ZIP=FlighHigh-R1-Cedric.zip
+FINAL_KERNEL_ZIP=FlyHigh-R1-Cedric.zip
 
 # Export User & Host
 export KBUILD_BUILD_USER=Infixremix
-export KBUILD_BUILD_HOST=root
+export KBUILD_BUILD_HOST=FlyHigh
 
 # Clean build always lol
 echo "**** Cleaning ****"
@@ -33,31 +33,21 @@ echo "**** Kernel defconfig is set to $KERNEL_DEFCONFIG ****"
 make $KERNEL_DEFCONFIG
 make -j$JOBS
 
-# Time for dtb
-echo "**** Generating DT.IMG ****"
-$DTBTOOL/dtbToolCM -2 -o $KERNEL_DIR/arch/arm/boot/dtb -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/dts/qcom/
 
-echo "**** Verify zImage,dtb & wlan****"
+echo "**** Verify zImage
 ls $KERNEL_DIR/arch/arm/boot/zImage
-ls $KERNEL_DIR/arch/arm/boot/dtb
-ls $KERNEL_DIR/drivers/staging/prima/wlan.ko
+
 
 #Anykernel 2 time!!
 echo "**** Verifying Anyernel2 Directory ****"
 ls $ANY_KERNEL2_DIR
 echo "**** Removing leftovers ****"
-rm -rf $ANY_KERNEL2_DIR/dtb
 rm -rf $ANY_KERNEL2_DIR/zImage
-rm -rf $ANY_KERNEL2_DIR/modules/wlan.ko
 rm -rf $ANY_KERNEL2_DIR/$FINAL_KERNEL_ZIP
 
 echo "**** Copying zImage ****"
 cp -rf $KERNEL_DIR/arch/arm/boot/zImage $ANY_KERNEL2_DIR/
-echo "**** Copying dtb ****"
-cp -rf $KERNEL_DIR/arch/arm/boot/dtb $ANY_KERNEL2_DIR/
-echo "**** Copying modules ****"
-cd $ANY_KERNEL2_DIR/
-mkdir modules
+
 cd ../
 cp -rf $KERNEL_DIR/drivers/staging/prima/wlan.ko $ANY_KERNEL2_DIR/modules/
 
@@ -72,5 +62,4 @@ cd $KERNEL_DIR
 rm -rf arch/arm/boot/dtb
 rm -rf $ANY_KERNEL2_DIR/$FINAL_KERNEL_ZIP
 rm -rf AnyKernel2/zImage
-rm -rf AnyKernel2/dtb
-rm -rf AnyKernel2/modules
+
