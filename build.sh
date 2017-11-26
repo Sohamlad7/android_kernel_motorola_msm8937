@@ -11,7 +11,7 @@ set -e
 KERNEL_DIR=$PWD
 git clone https://bitbucket.org/UBERTC/arm-eabi-4.9.git prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
 KERNEL_TOOLCHAIN=$HOME/flyhigh/prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9/bin/arm-eabi-
-KERNEL_DEFCONFIG=nebula_defconfig
+KERNEL_DEFCONFIG=cedric_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=8
 ANY_KERNEL2_DIR=$KERNEL_DIR/AnyKernel2/
@@ -58,7 +58,7 @@ echo "**** Time to zip up! ****"
 cd $ANY_KERNEL2_DIR/
 zip -r9 $FINAL_KERNEL_ZIP * -x README $FINAL_KERNEL_ZIP
 rm -rf $HOME/work/$FINAL_KERNEL_ZIP
-cp -rf $HOME/work/android_kernel_motorola_msm8937/AnyKernel2/$FINAL_KERNEL_ZIP $HOME/work/$FINAL_KERNEL_ZIP
+cp -rf $HOME/flyhigh/AnyKernel2/$FINAL_KERNEL_ZIP $HOME/flyhigh/$FINAL_KERNEL_ZIP
 
 echo "**** Good Bye!! ****"
 cd $KERNEL_DIR
