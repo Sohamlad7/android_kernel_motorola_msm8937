@@ -8,17 +8,17 @@
 set -e
 
 ## Copy this script inside the kernel directory
-git clone https://bitbucket.org/UBERTC/arm-eabi-4.9.git prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
 KERNEL_DIR=$PWD
+git clone https://bitbucket.org/UBERTC/arm-eabi-4.9.git prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9
 KERNEL_TOOLCHAIN=$HOME/flyhigh/prebuilts/gcc/linux-x86/arm/arm-linux-eabi-UB-4.9/bin/arm-eabi-
 KERNEL_DEFCONFIG=nebula_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=8
 ANY_KERNEL2_DIR=$KERNEL_DIR/AnyKernel2/
-FINAL_KERNEL_ZIP=FlyHigh-R1-Cedric.zip
+FINAL_KERNEL_ZIP=FlyHigh-R2-B1-Cedric.zip
 
 # Export User & Host
-export KBUILD_BUILD_USER=Infixremix
+export KBUILD_BUILD_USER=InfixRemix
 export KBUILD_BUILD_HOST=FlyHigh
 
 # Clean build always lol
@@ -33,32 +33,36 @@ echo "**** Kernel defconfig is set to $KERNEL_DEFCONFIG ****"
 make $KERNEL_DEFCONFIG
 make -j$JOBS
 
+# Time for dtb
+echo "**** Generating DT.IMG ****"
+$DTBTOOL/dtbToolCM -2 -o $KERNEL_DIR/arch/arm/boot/dtb -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/dts/qcom/
 
-echo "**** Verify zImage
+echo "**** Verify zImage,dtb & wlan****"
 ls $KERNEL_DIR/arch/arm/boot/zImage
-
+ls $KERNEL_DIR/arch/arm/boot/dtb
 
 #Anykernel 2 time!!
 echo "**** Verifying Anyernel2 Directory ****"
 ls $ANY_KERNEL2_DIR
 echo "**** Removing leftovers ****"
+rm -rf $ANY_KERNEL2_DIR/dtb
 rm -rf $ANY_KERNEL2_DIR/zImage
 rm -rf $ANY_KERNEL2_DIR/$FINAL_KERNEL_ZIP
 
 echo "**** Copying zImage ****"
 cp -rf $KERNEL_DIR/arch/arm/boot/zImage $ANY_KERNEL2_DIR/
-
-cd ../
+echo "**** Copying dtb ****"
+cp -rf $KERNEL_DIR/arch/arm/boot/dtb $ANY_KERNEL2_DIR/
 
 echo "**** Time to zip up! ****"
 cd $ANY_KERNEL2_DIR/
 zip -r9 $FINAL_KERNEL_ZIP * -x README $FINAL_KERNEL_ZIP
-rm -rf $HOME/flighhigh/$FINAL_KERNEL_ZIP
-cp -rf $HOME/flighhigh/AnyKernel2/$FINAL_KERNEL_ZIP $HOME/flighhigh/$FINAL_KERNEL_ZIP
+rm -rf $HOME/work/$FINAL_KERNEL_ZIP
+cp -rf $HOME/work/android_kernel_motorola_msm8937/AnyKernel2/$FINAL_KERNEL_ZIP $HOME/work/$FINAL_KERNEL_ZIP
 
 echo "**** Good Bye!! ****"
 cd $KERNEL_DIR
 rm -rf arch/arm/boot/dtb
 rm -rf $ANY_KERNEL2_DIR/$FINAL_KERNEL_ZIP
 rm -rf AnyKernel2/zImage
-
+rm -rf AnyKernel2/dtb
