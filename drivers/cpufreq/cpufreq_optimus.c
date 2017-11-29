@@ -19,13 +19,11 @@
 #define DEF_FREQUENCY_UP_THRESHOLD		(90)
 #define DEF_FREQUENCY_DOWN_THRESHOLD		(40)
 #define DEF_FREQUENCY_SUSPENDED_THRESHOLD    	(60)
-#define DEF_FREQUENCY_STEP			(6)
+#define DEF_FREQUENCY_STEP			(10)
 #define DEF_SAMPLING_DOWN_FACTOR		(1)
 #define MAX_SAMPLING_DOWN_FACTOR		(10)
-#define DEF_OPTIMAL_FREQ                        (998400)
+#define DEF_OPTIMAL_FREQ                        (1401600)
 #define DEF_OPTIMAL_THRESHOLD                   (60)
-#define DEFAULT_MIN_LOAD			(5)
-#define MICRO_FREQUENCY_MIN_SAMPLE_RATE	        (20000)
 
 static DEFINE_PER_CPU(struct cs_cpu_dbs_info_s, cs_cpu_dbs_info);
 
@@ -121,18 +119,11 @@ static void cs_check_cpu(int cpu, unsigned int load)
 		if (policy->cur == policy->min)
 			return;
 
-                if (load < DEFAULT_MIN_LOAD) {
- 			dbs_info->requested_freq = policy->min;
- 			goto scale_down;
- 		}
-
 		freq_target = get_freq_target(cs_tuners, policy);
 		if (dbs_info->requested_freq > freq_target)
 			dbs_info->requested_freq -= freq_target;
 		else
 			dbs_info->requested_freq = policy->min;
-
-scale_down:
 
 		__cpufreq_driver_target(policy, dbs_info->requested_freq,
 				CPUFREQ_RELATION_L);
@@ -412,7 +403,8 @@ static int cs_init(struct dbs_data *dbs_data)
         tuners->optimal_freq = DEF_OPTIMAL_FREQ;
 
 	dbs_data->tuners = tuners;
-        dbs_data->min_sampling_rate = MICRO_FREQUENCY_MIN_SAMPLE_RATE;
+        dbs_data->min_sampling_rate = MIN_SAMPLING_RATE_RATIO *
+		jiffies_to_usecs(10);
 	mutex_init(&dbs_data->mutex);
 	return 0;
 }
