@@ -22,7 +22,7 @@
 #define DEF_FREQUENCY_STEP			(10)
 #define DEF_SAMPLING_DOWN_FACTOR		(1)
 #define MAX_SAMPLING_DOWN_FACTOR		(10)
-#define DEF_OPTIMAL_FREQ                        (1401600)
+#define DEF_OPTIMAL_FREQ                        (211200)
 #define DEF_OPTIMAL_THRESHOLD                   (60)
 
 static DEFINE_PER_CPU(struct cs_cpu_dbs_info_s, cs_cpu_dbs_info);
