@@ -30,7 +30,6 @@
 #include <linux/async.h>
 #include <linux/of_gpio.h>
 #include <linux/of_platform.h>
-#include <slimport.h>
 
 #define SSC_EN
 
