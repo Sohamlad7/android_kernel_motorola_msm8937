@@ -336,18 +336,24 @@ static int get_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __
 			 sizeof(up->data_offset)))
 		return -EFAULT;
 
-	if (memory == V4L2_MEMORY_USERPTR) {
-		if (get_user(p, &up32->m.userptr) ||
-			put_user((unsigned long) compat_ptr(p),
-				&up->m.userptr))
-			return -EFAULT;
-	} else if (memory == V4L2_MEMORY_DMABUF) {
-		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
-			return -EFAULT;
-	} else {
+	switch (memory) {
+	case V4L2_MEMORY_MMAP:
+	case V4L2_MEMORY_OVERLAY:
 		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
 				 sizeof(up32->m.mem_offset)))
 			return -EFAULT;
+		break;
+	case V4L2_MEMORY_USERPTR:
+		if (get_user(p, &up32->m.userptr))
+			return -EFAULT;
+		up_pln = compat_ptr(p);
+		if (put_user((unsigned long)up_pln, &up->m.userptr))
+			return -EFAULT;
+		break;
+	case V4L2_MEMORY_DMABUF:
+		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
+			return -EFAULT;
+		break;
 	}
 
 	return 0;
@@ -356,45 +362,33 @@ static int get_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __
 static int put_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __user *up32,
 			    enum v4l2_memory memory)
 {
+	unsigned long p;
+
 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
 	    copy_in_user(&up32->data_offset, &up->data_offset,
 			 sizeof(up->data_offset)))
 		return -EFAULT;
 
-	/* For MMAP, driver might've set up the offset, so copy it back.
-	 * USERPTR stays the same (was userspace-provided), so no copying. */
-	if (memory == V4L2_MEMORY_MMAP)
+	switch (memory) {
+	case V4L2_MEMORY_MMAP:
+	case V4L2_MEMORY_OVERLAY:
 		if (copy_in_user(&up32->m.mem_offset, &up->m.mem_offset,
 				 sizeof(up->m.mem_offset)))
 			return -EFAULT;
-	/* For DMABUF, driver might've set up the fd, so copy it back. */
-	if (memory == V4L2_MEMORY_DMABUF)
+		break;
+	case V4L2_MEMORY_USERPTR:
+		if (get_user(p, &up->m.userptr) ||
+		    put_user((compat_ulong_t)ptr_to_compat((__force void *)p),
+			     &up32->m.userptr))
+			return -EFAULT;
+		break;
+	case V4L2_MEMORY_DMABUF:
 		if (copy_in_user(&up32->m.fd, &up->m.fd,
 				 sizeof(up->m.fd)))
 			return -EFAULT;
-
-	return 0;
-}
-
-static int bufsize_v4l2_buffer32(struct v4l2_buffer32 __user *up)
-{
-	__u32 type;
-	__u32 length;
-
-	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_buffer32)) ||
-			get_user(type, &up->type) ||
-			get_user(length, &up->length))
-		return -EFAULT;
-
-	if (V4L2_TYPE_IS_MULTIPLANAR(type)) {
-		if (length > VIDEO_MAX_PLANES)
-			return -EINVAL;
-
-		/* We don't really care if userspace decides to kill itself
-		 * by passing a very big length value
-		 */
-		return length * sizeof(struct v4l2_plane);
+		break;
 	}
+
 	return 0;
 }
 
@@ -456,7 +450,8 @@ static int get_v4l2_buffer32(struct v4l2_buffer __user *kp, struct
 	} else {
 		switch (memory) {
 		case V4L2_MEMORY_MMAP:
-			if (convert_in_user(&up->m.offset, &kp->m.offset))
+		case V4L2_MEMORY_OVERLAY:
+			if (get_user(kp->m.offset, &up->m.offset))
 				return -EFAULT;
 			break;
 		case V4L2_MEMORY_USERPTR:
@@ -468,10 +463,6 @@ static int get_v4l2_buffer32(struct v4l2_buffer __user *kp, struct
 
 				kp->m.userptr = (unsigned long)compat_ptr(tmp);
 			}
-			break;
-		case V4L2_MEMORY_OVERLAY:
-			if (convert_in_user(&up->m.offset, &kp->m.offset))
-				return -EFAULT;
 			break;
 		case V4L2_MEMORY_DMABUF:
 			if (convert_in_user(&up->m.fd, &kp->m.fd))
@@ -533,15 +524,12 @@ static int put_v4l2_buffer32(struct v4l2_buffer __user *kp, struct v4l2_buffer32
 	} else {
 		switch (memory) {
 		case V4L2_MEMORY_MMAP:
-			if (convert_in_user(&kp->m.offset, &up->m.offset))
+		case V4L2_MEMORY_OVERLAY:
+			if (put_user(kp->m.offset, &up->m.offset))
 				return -EFAULT;
 			break;
 		case V4L2_MEMORY_USERPTR:
 			if (convert_in_user(&kp->m.userptr, &up->m.userptr))
-				return -EFAULT;
-			break;
-		case V4L2_MEMORY_OVERLAY:
-			if (convert_in_user(&kp->m.offset, &up->m.offset))
 				return -EFAULT;
 			break;
 		case V4L2_MEMORY_DMABUF:
