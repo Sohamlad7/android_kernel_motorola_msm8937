@@ -61,7 +61,7 @@ obj-$(CONFIG_MOTOMODS) += greybus.o
 
 # gb-audio depends on MODS_CODEC_BUS
 ifneq ($(filter m y, $(CONFIG_MODS_CODEC_BUS)),)
-obj-$(CONFIG_MOTOMODS) += gb-audio.o
+#obj-$(CONFIG_MOTOMODS) += gb-audio.o
 endif
 
 #obj-$(CONFIG_MOTOMODS) += gb-vibrator.o
