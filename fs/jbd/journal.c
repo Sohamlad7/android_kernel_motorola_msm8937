@@ -708,7 +708,7 @@ int journal_bmap(journal_t *journal, unsigned int blocknr,
 struct journal_head *journal_get_descriptor_buffer(journal_t *journal)
 {
 	struct buffer_head *bh;
-	unsigned int blocknr;
+	unsigned int blocknr = 0;
 	int err;
 
 	err = journal_next_log_block(journal, &blocknr);

@@ -7390,7 +7390,7 @@ static ssize_t force_chg_iusb_show(struct device *dev,
 					struct device_attribute *attr,
 					char *buf)
 {
-	int state;
+	int state = 0;
 	int ret;
 	u8 value;
 
@@ -8102,7 +8102,7 @@ static int smbchg_probe(struct spmi_device *spmi)
 	int rc;
 	struct smbchg_chip *chip;
 	struct power_supply *usb_psy;
-	struct qpnp_vadc_chip *vadc_dev;
+	struct qpnp_vadc_chip *vadc_dev =  NULL;
 
 	usb_psy = power_supply_get_by_name("usb");
 	if (!usb_psy) {
