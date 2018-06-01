@@ -718,6 +718,12 @@ config FSUSB42_MUX
 	  This option enables a device driver for the FSUSB42 which is a
 	  2 port High Speed USB/UART Switch.
 
+config DTV_FC8300
+	tristate "FC8300 DTV module support"
+	default n
+	help
+	  Enable/disable FC8300 DTV module support
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
