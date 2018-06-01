@@ -1269,6 +1269,7 @@ CONFIG_DROPBOX=y
 # CONFIG_USB3813 is not set
 # CONFIG_FSUSB42_MUX is not set
 # CONFIG_C2PORT is not set
+CONFIG_DTV_FC8300=y
 
 #
 # EEPROM support
