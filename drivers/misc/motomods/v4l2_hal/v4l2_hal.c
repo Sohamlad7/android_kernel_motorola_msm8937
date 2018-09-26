@@ -334,7 +334,7 @@ static int get_ctrl(struct file *file, void *fh,
 			struct v4l2_control *ctrl)
 {
 	int ret;
-	__u32 idx;
+	__u32 idx = 0;
 	struct v4l2_stream_data *strm = FH_TO_STREAM(fh);
 
 	if (v4l2_hal_is_set_mapping_cid(ctrl->id))

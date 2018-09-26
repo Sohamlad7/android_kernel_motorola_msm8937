@@ -4323,8 +4323,8 @@ static const struct of_device_id msm8996_asoc_machine_of_match[]  = {
 static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev)
 {
 	struct snd_soc_card *card = NULL;
-	struct snd_soc_dai_link *dailink;
-	int len_1, len_2, len_3, len_4;
+	struct snd_soc_dai_link *dailink = NULL;
+	int len_1, len_2, len_3, len_4 = 0;
 	const struct of_device_id *match;
 
 	match = of_match_node(msm8996_asoc_machine_of_match, dev->of_node);
