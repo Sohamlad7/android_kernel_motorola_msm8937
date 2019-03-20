@@ -637,9 +637,8 @@ static void ks8851_rx_pkts3(struct ks8851_net *ks)
 	/* set dma read address */
 	ks8851_wrreg16(ks, KS_RXFDPR, RXFDPR_RXFPAI | 0x00);
 
-	/* start the packet dma process, and set auto-dequeue rx */
-	ks8851_wrreg16(ks, KS_RXQCR, ks->rc_rxqcr
-				   | RXQCR_SDA | RXQCR_ADRFE);
+	/* start DMA access */
+	ks8851_wrreg16(ks, KS_RXQCR, ks->rc_rxqcr | RXQCR_SDA);
 
 	/* read all frames from rx fifo */
 	ks8851_rdfifo(ks, buf, rxfifosize);
@@ -690,7 +689,8 @@ static void ks8851_rx_pkts3(struct ks8851_net *ks)
 				break;
 			}
 	}
-	ks8851_wrreg16(ks, KS_RXQCR, ks->rc_rxqcr);
+	/* end DMA access and dequeue packet */
+	ks8851_wrreg16(ks, KS_RXQCR, ks->rc_rxqcr | RXQCR_RRXEF);
 	kfree(buf);
 }
 
