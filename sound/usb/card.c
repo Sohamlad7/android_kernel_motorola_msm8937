@@ -610,6 +610,7 @@ snd_usb_audio_probe(struct usb_device *dev,
 		 * reset before memory is possibly returned.
 		 */
 		chip->probing = 0;
+		
 		if (!chip->num_interfaces)
 			snd_card_free(chip->card);
 	}
