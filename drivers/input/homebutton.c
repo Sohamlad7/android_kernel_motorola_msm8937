@@ -6,8 +6,8 @@
 
 #define FPS_ONENAV_TAP    616
 #define FPS_ONENAV_HOLD   617
-#define FPS_ONENAV_RIGHT  620
-#define FPS_ONENAV_LEFT   621
+#define FPS_ONENAV_LEFT   620
+#define FPS_ONENAV_RIGHT  621
 
 static DEFINE_MUTEX(hb_lock);
 
