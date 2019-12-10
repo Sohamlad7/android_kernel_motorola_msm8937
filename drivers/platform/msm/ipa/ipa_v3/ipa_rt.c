@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2019, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -84,6 +84,7 @@ int __ipa_generate_rt_hw_rule_v3_0(enum ipa_ip_type ip,
 		struct ipa3_hdr_proc_ctx_entry *proc_ctx;
 		proc_ctx = (entry->proc_ctx) ? : entry->hdr->proc_ctx;
 		if ((proc_ctx == NULL) ||
+			ipa3_check_idr_if_freed(proc_ctx) ||
 			(proc_ctx->cookie != IPA_PROC_HDR_COOKIE)) {
 			rule_hdr->u.hdr.proc_ctx = 0;
 			rule_hdr->u.hdr.hdr_offset = 0;
@@ -885,7 +886,8 @@ struct ipa3_rt_tbl *__ipa3_find_rt_tbl(enum ipa_ip_type ip, const char *name)
 
 	set = &ipa3_ctx->rt_tbl_set[ip];
 	list_for_each_entry(entry, &set->head_rt_tbl_list, link) {
-		if (!strcmp(name, entry->name))
+		if (!ipa3_check_idr_if_freed(entry) &&
+			!strcmp(name, entry->name))
 			return entry;
 	}
 
@@ -1659,10 +1661,35 @@ int ipa3_reset_rt(enum ipa_ip_type ip, bool user_only)
 			if (!user_only ||
 				rule->ipacm_installed) {
 				list_del(&rule->link);
+				if (rule->hdr) {
+					hdr_entry = ipa3_id_find(
+							rule->rule.hdr_hdl);
+					if (!hdr_entry ||
+					hdr_entry->cookie != IPA_HDR_COOKIE) {
+						IPAERR_RL(
+						"Header already deleted\n");
+						return -EINVAL;
+					}
+				} else if (rule->proc_ctx &&
+					(!ipa3_check_idr_if_freed(
+						rule->proc_ctx))) {
+					hdr_proc_entry =
+						ipa3_id_find(
+						rule->rule.hdr_proc_ctx_hdl);
+					if (!hdr_proc_entry ||
+						hdr_proc_entry->cookie !=
+							IPA_PROC_HDR_COOKIE) {
+						IPAERR_RL(
+						"Proc entry already deleted\n");
+						return -EINVAL;
+					}
+				}
 				tbl->rule_cnt--;
 				if (rule->hdr)
 					__ipa3_release_hdr(rule->hdr->id);
-				else if (rule->proc_ctx)
+				else if (rule->proc_ctx &&
+					(!ipa3_check_idr_if_freed(
+						rule->proc_ctx)))
 					__ipa3_release_hdr_proc_ctx(
 						rule->proc_ctx->id);
 				rule->cookie = 0;
