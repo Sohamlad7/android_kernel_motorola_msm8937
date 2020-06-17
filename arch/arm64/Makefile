@@ -37,6 +37,10 @@ ifeq ($(CONFIG_ARM64_ERRATUM_843419), y)
 KBUILD_CFLAGS_MODULE	+= -mcmodel=large
 endif
 
+ifeq ($(CONFIG_ARCH_MSM8937), y)
+KBUILD_CFLAGS	+= -mcpu=cortex-a53
+endif
+
 # Default value
 head-y		:= arch/arm64/kernel/head.o
 
