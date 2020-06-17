@@ -647,6 +647,9 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-allow-store-data-races)
 # Needed to unbreak GCC 7.x and above
 KBUILD_CFLAGS   += $(call cc-option,-fno-store-merging,)
 
+# Avoid gcc-10 regression
+KBUILD_CFLAGS	+= --param=max-inline-insns-auto=1000
+
 ifdef CONFIG_READABLE_ASM
 # Disable optimizations that make assembler listings hard to read.
 # reorder blocks reorders the control in the function
